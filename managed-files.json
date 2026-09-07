@@ -1,0 +1,22 @@
+[
+  {
+    "source": "client-patches/Data/Patch-V.MPQ",
+    "target": "Data/Patch-V.MPQ"
+  },
+  {
+    "source": "client-patches/Data/Patch-W.MPQ",
+    "target": "Data/Patch-W.MPQ"
+  },
+  {
+    "source": "client-patches/Data/Patch-Y.MPQ",
+    "target": "Data/Patch-Y.MPQ"
+  },
+  {
+    "source": "client-patches/Data/Patch-Z.MPQ",
+    "target": "Data/Patch-Z.MPQ"
+  },
+  {
+    "source": "client-patches/Data/enUS/patch-enUS-4.MPQ",
+    "target": "Data/enUS/patch-enUS-4.MPQ"
+  }
+]

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>swArena Launcher</AssemblyName>
+    <RootNamespace>SwArena.Launcher</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="launcher-settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+    <Resource Include="Assets\gurubashi-arena-background.png" />
+  </ItemGroup>
+</Project>

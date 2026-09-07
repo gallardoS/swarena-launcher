@@ -1,0 +1,82 @@
+name: Deploy client patches to R2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "client-patches/**"
+      - "managed-files.json"
+      - "New-ClientRelease.ps1"
+      - "src/SwArena.Publisher/**"
+      - ".github/workflows/deploy-client-patches.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r2-client-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    environment: production
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      R2_BUCKET: swarena-updates
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Create version
+        shell: pwsh
+        run: |
+          $shortSha = $env:GITHUB_SHA.Substring(0, 7)
+          "RELEASE_VERSION=main-$env:GITHUB_RUN_NUMBER-$shortSha" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Generate release
+        shell: pwsh
+        run: .\New-ClientRelease.ps1 -Version $env:RELEASE_VERSION -RealmAddress swarena.swami.dev
+
+      - name: Upload immutable payloads
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $releaseRoot = (Resolve-Path -LiteralPath '.\release').Path
+          $versionRoot = (Resolve-Path -LiteralPath ".\release\files\$env:RELEASE_VERSION").Path
+          $payloads = Get-ChildItem -LiteralPath $versionRoot -File -Recurse
+
+          foreach ($file in $payloads) {
+              $key = $file.FullName.Substring($releaseRoot.Length + 1).Replace('\', '/')
+              Write-Host "Uploading $key"
+              npx --yes wrangler@4 r2 object put "$env:R2_BUCKET/$key" --file $file.FullName --content-type application/octet-stream --cache-control "public, max-age=31536000, immutable" --remote
+              if ($LASTEXITCODE -ne 0) {
+                  throw "Failed to upload $key"
+              }
+          }
+
+      - name: Publish manifest last
+        shell: pwsh
+        run: |
+          npx --yes wrangler@4 r2 object put "$env:R2_BUCKET/manifest.json" --file .\release\manifest.json --content-type "application/json; charset=utf-8" --cache-control "no-cache, no-store, must-revalidate" --remote
+          if ($LASTEXITCODE -ne 0) {
+              throw 'Failed to publish manifest.json'
+          }
+
+      - name: Verify public manifest
+        shell: pwsh
+        run: |
+          $manifest = Invoke-RestMethod -Uri "https://updates.swami.dev/manifest.json?verify=$env:GITHUB_SHA" -Headers @{ 'Cache-Control' = 'no-cache' }
+          if ($manifest.version -ne $env:RELEASE_VERSION) {
+              throw "Expected $env:RELEASE_VERSION but received $($manifest.version)"
+          }
+          Write-Host "Published and verified $($manifest.version)"

@@ -1,0 +1,8 @@
+artifacts/
+release/
+.dotnet-cli/
+.wrangler/
+src/**/bin/
+src/**/obj/
+stage/
+NUL

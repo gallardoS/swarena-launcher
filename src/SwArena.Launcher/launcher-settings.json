@@ -1,0 +1,6 @@
+{
+  "manifestUrl": "https://updates.swami.dev/manifest.json",
+  "gameExecutable": "Wow.exe",
+  "launchArguments": "",
+  "allowOfflineLaunch": false
+}

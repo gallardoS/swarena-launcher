@@ -1,0 +1,56 @@
+name: Build launcher
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/SwArena.Launcher/**"
+      - "SwArena.Launcher.sln"
+      - ".github/workflows/build-launcher.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-launcher-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore .\SwArena.Launcher.sln
+
+      - name: Publish standalone launcher
+        shell: pwsh
+        run: >-
+          dotnet publish .\src\SwArena.Launcher
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true
+          -p:DebugType=None
+          -p:DebugSymbols=false
+          -o .\artifacts\launcher
+
+      - name: Upload launcher artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: swArena-Launcher-${{ github.sha }}
+          path: artifacts/launcher/swArena Launcher.exe
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,82 @@
+<Application x:Class="SwArena.Launcher.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="Background" Color="#11100E" />
+        <SolidColorBrush x:Key="Surface" Color="#191713" />
+        <SolidColorBrush x:Key="Deep" Color="#0D0C0A" />
+        <SolidColorBrush x:Key="Border" Color="#4B3923" />
+        <SolidColorBrush x:Key="BorderLight" Color="#76562D" />
+        <SolidColorBrush x:Key="Gold" Color="#C99A4A" />
+        <SolidColorBrush x:Key="GoldMuted" Color="#98713A" />
+        <SolidColorBrush x:Key="Text" Color="#E7DECE" />
+        <SolidColorBrush x:Key="Muted" Color="#978D7D" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Poppins, Segoe UI" />
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource Gold}" />
+            <Setter Property="Background" Value="#211A12" />
+            <Setter Property="BorderBrush" Value="{StaticResource GoldMuted}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontFamily" Value="Poppins, Segoe UI" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Padding" Value="24,11" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="#2A2116" />
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{StaticResource Gold}" />
+                                <Setter Property="Foreground" Value="#E4BD76" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="#16110C" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.55" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ProgressBar">
+            <Setter Property="Height" Value="6" />
+            <Setter Property="Foreground" Value="{StaticResource Gold}" />
+            <Setter Property="Background" Value="#231D15" />
+            <Setter Property="BorderBrush" Value="{StaticResource Border}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid x:Name="PART_Track">
+                                <Rectangle x:Name="PART_Indicator"
+                                           HorizontalAlignment="Left"
+                                           Fill="{TemplateBinding Foreground}" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Application.Resources>
+</Application>
