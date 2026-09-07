@@ -6,7 +6,7 @@ The launcher checks the managed client files against the manifest published at `
 
 ## Using the compiled launcher
 
-1. Download `swArena Launcher.exe` from the repository Releases page or from the official swArena download page.
+1. Download `swArena Launcher.exe` from the [latest GitHub Release](https://github.com/gallardoS/swarena-launcher/releases/latest) or from the official swArena download page.
 2. Place the executable anywhere you want. It does not need to be inside the World of Warcraft directory.
 3. Open `swArena Launcher.exe`.
 4. Select **change game folder** and choose the folder that contains `Wow.exe`.
@@ -64,8 +64,10 @@ Then temporarily point `src/SwArena.Launcher/launcher-settings.json` to `http://
 
 ## Automated workflows
 
-- `build-launcher.yml` builds the standalone executable when launcher source files change on `main`. The EXE is available as a GitHub Actions artifact.
+- `build-launcher.yml` builds the standalone executable when launcher source files change on `main`. It uploads an Actions artifact and publishes the EXE in a GitHub Release named `swArena Launcher v1.0.<run number>`.
 - `deploy-client-patches.yml` publishes a new version to Cloudflare R2 only when managed patches or release tooling change on `main`.
+
+The launcher Release workflow has `contents: write` permission so it can create the version tag and Release using GitHub's automatic `GITHUB_TOKEN`; no additional secret is required. Changes that only affect client patches do not create a new launcher Release.
 
 The R2 deployment requires a GitHub environment named `production` and these repository or environment secrets:
 
